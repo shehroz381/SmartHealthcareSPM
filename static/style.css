@@ -71,7 +71,12 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 14px; }
+html { 
+    scroll-behavior: smooth; 
+    font-size: 14px; 
+    overflow-x: hidden; 
+    max-width: 100vw;
+}
 body {
     margin: 0;
     padding: 0;
@@ -81,6 +86,7 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    max-width: 100vw;
 }
 
 /* ==========================================================================
@@ -90,6 +96,8 @@ body {
     display: flex;
     min-height: 100vh;
     width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 /* Sidebar */
@@ -352,19 +360,71 @@ body {
     flex-shrink: 0;
 }
 .sidebar-toggle-btn {
-    background: none;
-    border: none;
-    color: var(--slate-600);
+    display: none;
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    color: var(--slate-700);
     cursor: pointer;
-    padding: 8px;
+    padding: 6px 9px;
     border-radius: var(--radius-sm);
-    display: flex;
     align-items: center;
+    justify-content: center;
     transition: all 0.15s ease;
+    flex-shrink: 0;
+    min-height: 36px;
+    min-width: 36px;
 }
 .sidebar-toggle-btn:hover {
     background: #f1f5f9;
-    color: var(--dark);
+    color: var(--primary);
+    border-color: var(--primary-border);
+}
+
+/* Sidebar Backdrop Overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Close Button inside Sidebar Brand */
+.sidebar-close-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+.sidebar-close-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Responsive Brand Title visibility */
+.brand-text-short {
+    display: none;
+}
+.brand-text-full {
+    display: inline;
 }
 .navbar-search {
     display: flex;
@@ -1084,7 +1144,9 @@ select {
    ========================================================================== */
 .table-responsive {
     width: 100%;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
     background: #ffffff;
@@ -1092,6 +1154,7 @@ select {
 }
 .data-table {
     width: 100%;
+    min-width: 580px;
     border-collapse: collapse;
     font-size: 13px;
     text-align: left;
@@ -1167,6 +1230,12 @@ select {
     padding: 18px 20px;
     margin: 16px 0;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+}
+.gantt-header-row,
+.gantt-item-row {
+    min-width: 580px;
 }
 .gantt-header-row {
     display: grid;
@@ -1460,10 +1529,13 @@ select {
     padding: 18px;
     margin: 18px 0;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
     box-shadow: var(--shadow-xs);
 }
 .risk-matrix-table {
     width: 100%;
+    min-width: 600px;
     border-collapse: collapse;
     text-align: center;
 }
@@ -1795,22 +1867,285 @@ select {
 }
 .app-footer p { margin: 0; }
 
-/* Responsive adjustments */
-@media (max-width: 900px) {
+/* ==========================================================================
+   COMPREHENSIVE RESPONSIVE SYSTEM
+   Supports Mobile (320px, 375px, 390px, 430px), Tablets (768px, 992px), Desktops
+   ========================================================================== */
+
+/* Tablet & Mobile Navigation Breakpoint (<= 992px) */
+@media (max-width: 992px) {
     .app-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 280px;
+        max-width: 85vw;
+        z-index: 1100;
         transform: translateX(-100%);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
     }
     .app-sidebar.sidebar-open {
         transform: translateX(0);
     }
+    .sidebar-close-btn {
+        display: block;
+    }
+    .sidebar-toggle-btn {
+        display: flex;
+    }
     .app-main {
-        margin-left: 0;
+        margin-left: 0 !important;
+        width: 100% !important;
+        min-width: 0;
+    }
+    body.sidebar-opened {
+        overflow: hidden;
+    }
+}
+
+/* Tablet & Phablet Breakpoint (<= 768px) */
+@media (max-width: 768px) {
+    /* Responsive Topbar */
+    .top-navbar {
+        height: auto;
+        min-height: 60px;
+        padding: 10px 14px;
+        flex-wrap: wrap;
+        row-gap: 8px;
+        gap: 8px 12px;
+    }
+    .navbar-left {
+        display: contents;
+    }
+    .sidebar-toggle-btn {
+        order: 1;
+    }
+    .navbar-brand-title {
+        order: 2;
+        flex: 1;
+        min-width: 0;
+        margin-left: 4px;
+        font-size: 14px;
+    }
+    .navbar-right {
+        order: 3;
+        margin-left: auto !important;
+    }
+    .navbar-project-switcher {
+        order: 4;
+        width: 100%;
+        margin: 2px 0 2px 0;
+        padding: 6px 10px;
+        justify-content: space-between;
+    }
+    .navbar-project-switcher form {
+        flex: 1;
+        min-width: 0;
+    }
+    .navbar-project-select {
+        width: 100%;
+        max-width: 100%;
+        font-size: 12.5px;
+    }
+
+    /* Content Body Padding */
+    .content-body {
+        padding: 16px 14px 36px;
+    }
+    
+    /* Section Containers */
+    section {
+        padding: 20px 16px;
+        border-radius: var(--radius-md);
+        margin-bottom: 20px;
+    }
+    
+    /* Section Headers */
+    .section-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .section-title-wrap {
         width: 100%;
     }
+
+    /* Footer */
+    .app-footer {
+        padding: 16px 14px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+
+    /* Governance Grids */
     .cr-effect-grid {
         grid-template-columns: 1fr;
     }
     .pdpc-branch {
         grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .resource-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Standard Mobile Breakpoint (<= 640px) */
+@media (max-width: 640px) {
+    /* Brand title switch to compact text on mobile */
+    .brand-text-full {
+        display: none;
+    }
+    .brand-text-short {
+        display: inline;
+        font-size: 13.5px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Page Header */
+    .page-title {
+        font-size: 19px;
+    }
+    .page-breadcrumb {
+        font-size: 11.5px;
+        flex-wrap: wrap;
+    }
+
+    /* Form Fields & Full Column Stacking */
+    .form-card {
+        padding: 16px 14px;
+        border-radius: var(--radius-md);
+    }
+    .form-grid, 
+    .form-grid-3 {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+    }
+    .col-span-1, 
+    .col-span-2, 
+    .col-span-3, 
+    .full-width {
+        grid-column: 1 / -1 !important;
+    }
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* KPI Cards & Grids */
+    .stat-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+    }
+    .change-summary {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+    }
+
+    /* Item Cards & Saved Projects Grid (Prevent 320px blowout) */
+    .cards {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+    }
+    .item-card {
+        min-width: 0;
+        padding: 14px 16px;
+        word-break: break-word;
+    }
+
+    /* Resource Allocation Grid */
+    .resource-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+    }
+
+    /* EVM Grid: 2 columns on mobile */
+    .evm-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px;
+    }
+    .evm-card {
+        padding: 12px 14px;
+    }
+
+    /* Schedule Status Grid */
+    .schedule-status-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+    }
+
+    /* Simplified Gantt Panels */
+    .milestones-bar-panel, 
+    .schedule-status-panel {
+        padding: 14px 14px;
+    }
+}
+
+/* Extra-Small Mobile Breakpoint (<= 480px: 320px, 375px, 390px, 430px) */
+@media (max-width: 480px) {
+    .content-body {
+        padding: 12px 10px 28px;
+    }
+    section {
+        padding: 16px 12px;
+    }
+    .top-navbar {
+        padding: 8px 10px;
+    }
+    .navbar-project-switcher {
+        padding: 5px 8px;
+    }
+    .project-switcher-label {
+        font-size: 11px;
+    }
+    .navbar-project-select {
+        font-size: 12px;
+    }
+
+    /* EVM Grid on tiny screens */
+    .evm-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px;
+    }
+    .evm-card {
+        padding: 10px 10px;
+    }
+    .evm-card .evm-value {
+        font-size: 16px;
+    }
+    .evm-card .evm-label {
+        font-size: 10px;
+    }
+
+    /* Touch Friendly Controls */
+    .btn, 
+    input:not([type="checkbox"]):not([type="radio"]), 
+    select, 
+    textarea {
+        min-height: 42px;
+    }
+    .btn-sm {
+        min-height: 34px;
+        padding: 6px 10px;
+    }
+
+    /* Stat Cards value scaling */
+    .stat-card-value {
+        font-size: 24px;
+    }
+    .stat-card {
+        padding: 16px 18px;
+        min-height: 110px;
     }
 }
